@@ -1,33 +1,32 @@
-//First line of main.js...wrap everything in a self-executing anonymous function to move to local scope
+//wrap everything in a self-executing anonymous function to move to local scope
 (function () {
 
     //pseudo-global variables
-    var attrArray = [//"Coal", "NaturalGas", "Petroleum", "Nuclear", "Renewable",
-        "Coal", "Natural Gas", "Nuclear", "Petroleum", "Renewable"]; //list of attributes
+    var attrArray = ["Coal", "Natural Gas", "Nuclear", "Petroleum", "Renewable"]; //list of attributes
     var expressed = "Default"; //initial attribute
 
     var displayArray = ["Equal Interval", "Linear", "Natural Breaks", "Quantile"]; //list of display methods
     var display = "Default"; //initial attribute
 
-//chart frame dimensions
-var chartWidth = window.innerWidth * 0.425,
-    chartHeight = 473,
-    leftPadding = 25,
-    rightPadding = 5,
-    topBottomPadding = 5,
-    chartInnerWidth = chartWidth - leftPadding - rightPadding,
-    chartInnerHeight = chartHeight - topBottomPadding * 2,
-    translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+    //chart frame dimensions
+    var chartWidth = window.innerWidth * 0.425,
+        chartHeight = 473,
+        leftPadding = 0,
+        rightPadding = 5,
+        topBottomPadding = 5,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
+        translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
-//create a scale to size bars proportionally to frame and for axis
-var yScale = d3.scale.linear()
-    .range([0, 420])
-    .domain([0, 85]);   
+    //create a scale to size bars proportionally to frame and for axis
+    var yScale = d3.scale.linear()
+        .range([7, 427])
+        .domain([0, 85]);   
 
     //begin script when window loads
     window.onload = setMap();
 
-    //Example 1.3 line 4...set up choropleth map
+    //set up choropleth map
     function setMap(){
 
         //map frame dimensions
@@ -55,13 +54,11 @@ var yScale = d3.scale.linear()
             .defer(d3.json, "data/states.topojson") //load choropleth spatial data
             .await(callback);
 
-        //Example 1.4 line 10
+        //callback function that displays data
         function callback(error, csvData, states, display){
             
             //translate states TopoJSON
             var usStates = topojson.feature(states, states.objects.collection).features;
-
-            //variables for data join
 
             //join csv data to GeoJSON enumeration units
             usStates = joinData(usStates, csvData);
@@ -75,8 +72,10 @@ var yScale = d3.scale.linear()
             //add coordinated visualization to the map
             setChart(csvData, colorScale);
 
+            //creates dropdown for attributes
             createAttributeDropdown(csvData);
 
+            //creates dropdown for classifications
             createDisplayDropdown(csvData);
         };
     };
@@ -107,7 +106,6 @@ var yScale = d3.scale.linear()
         };
         return usStates
     };
-
 
     //function to create color scale generator
     function makeColorScale(data, display){
@@ -143,13 +141,10 @@ var yScale = d3.scale.linear()
                     colorClasses[4]
                 ])
                 .domain([
-                    d3.min(data, function(d) { return parseFloat(d[expressed]); }),
-                    d3.max(data, function(d) { return parseFloat(d[expressed]); })
-            
+                    d3.min(data, function(d) { return parseFloat(d[expressed]); }),                    d3.max(data, function(d) { return parseFloat(d[expressed]); })
                 ]);
-
+            
             return colorScale;
-
         } else if (display == "Natural Breaks") {
             //create color scale generator
             var colorScale = d3.scaleThreshold()
@@ -193,6 +188,7 @@ var yScale = d3.scale.linear()
             return colorScale;
 
         } else { 
+            //create color scale generator of grey if no data chosen
             var colorScale = d3.scaleLinear()
             .range([
                 "#ccc",
@@ -202,9 +198,7 @@ var yScale = d3.scale.linear()
                 0, 
                 100
             ]);
-
             return colorScale;
-
         }
     };
 
@@ -230,40 +224,42 @@ var yScale = d3.scale.linear()
                 return "states " + d.properties.postal;
             })
             .attr("d", path)
-            //Example 1.7 line 13
+            //fills color based on values derived in ColorScale
             .style("fill", function(d){
                 return choropleth(d.properties, colorScale);
             })
+            //highlight feature
             .on("mouseover", function(d){
                 highlight(d.properties);
             })
+            //dehighlight feature
             .on("mouseout", function(d){
                 dehighlight(d.properties);
             })
+            //moves label when moving mouse
             .on("mousemove", moveLabel);
 
+        //appends a "base state" for use in dehighlight feautre  
         var desc = statesDisplay.append("desc")
             .text('{"stroke": "#000", "stroke-width": "0.5px"}');
-
     };
 
-    //Example 2.1 line 11...function to create coordinated bar chart
+    //function to create coordinated bar chart
     function setChart(csvData, colorScale){
 
-        //Example 2.1 line 17...create a second svg element to hold the bar chart
+        //create a second svg element to hold the bar chart
         var chart = d3.select("map")
             .append("svg")
             .attr("width", chartWidth)
             .attr("height", chartHeight)
             .attr("class", "chart");
 
-
         //create a scale to size bars proportionally to frame
         var xScale = d3.scaleLinear()
             .range([0, chartWidth])
             .domain([0, 105]);
 
-        //Example 2.4 line 8...set bars for each province
+        //set bars for each state
         var bars = chart.selectAll(".bars")
             .data(csvData)
             .enter()
@@ -285,19 +281,21 @@ var yScale = d3.scale.linear()
                 return chartHeight - yScale(parseFloat(d[expressed]));
 
             })
-            //Example 2.5 line 23...end of bars block
+            //styles bars based on colorScale
             .style("fill", function(d){
                 return choropleth(d, colorScale);
             })
+            //mouseover actions
             .on("mouseover", highlight)
             .on("mouseout", dehighlight)
             .on("mousemove", moveLabel);
         
+        //appends a "base state" for use in dehighlight feautre
         var desc = bars.append("desc")
             .text('{"stroke": "#000", "stroke-width": "0.5px"}');
 
 
-        //below Example 2.8...create a text element for the chart title
+        //create a text element for the chart title
         var chartTitle = chart.append("text")
             .attr("x", 20)
             .attr("y", 40)
@@ -325,32 +323,6 @@ var yScale = d3.scale.linear()
         //     .attr("height", chartInnerHeight)
         //     .attr("transform", translate);
 
-
-
-
-      //   // Create Event Handlers for mouse
-      // function handleMouseOver(d, i) {  // Add interactivity
-
-      //       // Specify where to put label of text
-      //       chart.append("text").attr({
-      //           id: "t" + d.x + "-" + d.y + "-" + i,  // Create an id for text so we can select it later for removing on mouseout
-      //           x: function() { return 20; },
-      //           y: function() { return 60; }
-      //       })
-      //       .text(function() {
-      //         return [ d.name + ": " + Number(Math.round(d[expressed] + 'e3')+ 'e-3').toString() + "%"];  // Value of the text
-      //       });
-      //     }
-
-      // function handleMouseOut(d, i) {
-      //       // Use D3 to select element, change color back to normal
-      //       d3.select(this).attr({
-      //         fill: "black"
-      //       });
-
-      //       // Select text by id and then remove
-      //       d3.select("#t" + d.x + "-" + d.y + "-" + i).remove();  // Remove text location
-      //     };
     };
 
     //function to create a dropdown menu for attribute selection
@@ -417,14 +389,20 @@ var yScale = d3.scale.linear()
                 return choropleth(d, colorScale);
             });
 
+        //updates title block
         var chartTitle = d3.selectAll("text")
             .attr("x", 20)
             .attr("y", 40)
             .attr("class", "chartTitle")
-            .text( expressed + " Consumption (% of total energy)");
+            .text( expressed + " Consumption");
 
+        var chartTitle = d3.select(".chart")
+            .append("text")
+            .attr("x", 20)
+            .attr("y", 65)
+            .attr("class", "chartTitle")
+            .text("(% of total energy consumption)");
     };
-
 
     //function to create a dropdown menu for attribute selection
     function createDisplayDropdown(csvData){
@@ -490,6 +468,7 @@ var yScale = d3.scale.linear()
                 return choropleth(d, colorScale);
             });
 
+        //updates title block
         var chartTitle = d3.selectAll("text")
             .attr("x", 20)
             .attr("y", 40)
@@ -498,14 +477,21 @@ var yScale = d3.scale.linear()
                 if (expressed == "Default") {
                     var tempTitle = "Select Energy Type"
                 } else { 
-                    var tempTitle = expressed + " Consumption (% of total energy)"
+                    var tempTitle = expressed + " Consumption";
                 }
                 return tempTitle;
             })
+
+        var chartTitle = d3.select(".chart")
+            .append("text")
+            .attr("x", 20)
+            .attr("y", 65)
+            .attr("class", "chartTitle")
+            .text("(% of total energy consumption)");
     };
 
 
-     //function to highlight enumeration units and bars
+    //function to highlight enumeration units and bars
     function highlight(props){
         //change stroke
         var selected = d3.selectAll("." + props.postal)
@@ -524,6 +510,7 @@ var yScale = d3.scale.linear()
                 return getStyle(this, "stroke-width")
             });
 
+        //extracts style from base line condition of svg element
         function getStyle(element, styleName){
             var styleText = d3.select(element)
                 .select("desc")
@@ -534,13 +521,14 @@ var yScale = d3.scale.linear()
             return styleObject[styleName];
         };
         
-        //below Example 2.4 line 21...remove info label
+        //removes info label
         d3.select(".infolabel").remove();
     };
 
     //function to create dynamic label
     function setLabel(props){
 
+        //conditional to create label if no attribute is selected or if attribute is NaN
         if ( expressed == "Default") {
             var labelAttribute = "<h5>Select Energy Type</h5>";
         } else if (isNaN(props[expressed])) {
@@ -595,5 +583,4 @@ var yScale = d3.scale.linear()
             .style("left", x + "px")
             .style("top", y + "px");
     };
-
 })(); //last line of main.js
