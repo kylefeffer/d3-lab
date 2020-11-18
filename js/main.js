@@ -11,7 +11,7 @@
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.425,
         chartHeight = 473,
-        leftPadding = 0,
+        leftPadding = 25,
         rightPadding = 5,
         topBottomPadding = 5,
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
@@ -297,32 +297,24 @@
 
         //create a text element for the chart title
         var chartTitle = chart.append("text")
-            .attr("x", 20)
+            .attr("x", 30)
             .attr("y", 40)
             .attr("class", "chartTitle")
             .text("Select Energy Type & Classification");
 
 
-        // var axisScale = d3.scaleLinear()
-        //     .range([450, 50])
-        //     .domain([0 , 85]);
+        var axisScale = d3.scaleLinear()
+            .range([7, 427])
+            .domain([85 , 0]);
 
-        // //create vertical axis generator
-        // var yAxis = d3.axisLeft(axisScale);
+        //create vertical axis generator
+        var yAxis = d3.axisLeft(axisScale);
 
-        // //place axis
-        // var axis = chart.append("g")
-        //     .attr("class", "axis")
-        //     .attr("transform", "translate(50, 0)")
-        //     .call(yAxis);
-
-        // //create frame for chart border
-        // var chartFrame = chart.append("rect")
-        //     .attr("class", "chartFrame")
-        //     .attr("width", chartInnerWidth)
-        //     .attr("height", chartInnerHeight)
-        //     .attr("transform", translate);
-
+        //place axis
+        var axis = d3.select(".chart").append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(20,38)")
+            .call(yAxis);
     };
 
     //function to create a dropdown menu for attribute selection
@@ -390,15 +382,15 @@
             });
 
         //updates title block
-        var chartTitle = d3.selectAll("text")
-            .attr("x", 20)
+        var chartTitle = d3.select(".chartTitle")
+            .attr("x", 30)
             .attr("y", 40)
             .attr("class", "chartTitle")
             .text( expressed + " Consumption");
 
         var chartTitle = d3.select(".chart")
             .append("text")
-            .attr("x", 20)
+            .attr("x", 30)
             .attr("y", 65)
             .attr("class", "chartTitle")
             .text("(% of total energy consumption)");
@@ -469,8 +461,8 @@
             });
 
         //updates title block
-        var chartTitle = d3.selectAll("text")
-            .attr("x", 20)
+        var chartTitle = d3.select(".chartTitle")
+            .attr("x", 30)
             .attr("y", 40)
             .attr("class", "chartTitle")
             .text( function () {
@@ -484,7 +476,7 @@
 
         var chartTitle = d3.select(".chart")
             .append("text")
-            .attr("x", 20)
+            .attr("x", 30)
             .attr("y", 65)
             .attr("class", "chartTitle")
             .text("(% of total energy consumption)");
