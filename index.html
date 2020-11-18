@@ -30,6 +30,7 @@
 	<body>
 
 		<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src = "https://d3js.org/d3-axis.v1.min.js"></script>
 		<script src="//d3js.org/topojson.v1.min.js"></script>
 		<script type='text/javascript' src='lib/d3-queue.js'></script>
 		<script type='text/javascript' src='lib/d3-queue.min.js'></script>
@@ -46,6 +47,59 @@
 		
 				
 		<!--links to main.js-->
-		<script type="text/javascript" src="js/main.js"></script>
+		<div id="banner">
+			<h1>State Energy Profiles</h1>
+		</div>
+
+		<map>
+			<script type="text/javascript" src="js/main.js"></script>
+		</map>
+
+		<div style="padding: 16px">
+			<h4>Introduction to Data Explorer</h4>
+			This data explorer shows the consumption of energy within each state of the United States. All energy data has been broken down into 5 energy types as defined by the United States Energy Information Administration and explained below. Additionally, you can choose to reclassify the data for more in depth data exploration. All data was collected in millions of BTUs (British Thermal Units) before being normalized into a percentage based on the total BTU consumption of each state. Please feel free to explore the data and reach out with further questions to the contact information at the bottom of this page.
+		</div>
+			
+		<div style="padding: 16px">
+			<h4>Energy Types</h4>
+			<b>Coal</b> - Energy derived by the burning of coal.<br>
+
+			<b>Natural Gas</b> - Energy derived by burning of natural gas including the following: shale & tight gas, coalbed methane, natural gas liquids (natural gas plant liquids, lease condensate), and liquefied natural gas.<br>
+
+			<b>Nuclear</b> - Energy derived through radioactive materials like uranium.<br>
+
+			<b>Petroleum</b> - Energy derived by the burning of petroleum products such as: crude oil, unconventional oil (oil sands, shale oil, thigh oil), finished petroleum products (motor gasoline, jet fuel, kerosene, diesel fuel & fuel oil, residual fuel oil, petroleum coke, etc.), liquid petroleum gases ( propane, butane, ethane), hydrogen, biofuels (ethanol & biodiesel), gasoline blending components, pentanes, and unfinished oils.<br>
+
+			<b>Renewable</b> - Energy derived through the following: biomass (including biofuels such as ethanol and biodiesel as well as waste/wood), hydroelectric, geothermal, solar thermal / photovotaic, and wind.<br>
+		</div>
+			
+		<div style="padding: 16px">
+			<h4>Classification Methods</h4>
+			<b>Equal Interval</b> - The total range of the data is evaluated and broken evenly into classes. This creates classes of equal range. For example, if the data were to range from 1 to 50, our 5 classes would be divided evenly across that range from 1-10, 11-20, 21-30, 31-50, and 40-50.<br>
+
+			<b>Linear</b> - No classes are generated. Instead, all data is placed on a spectrum where the color is dependent on the value's location relative to the maximum and minimum values in the dataset.<br>
+
+			<b>Natural Breaks</b> - Classes are determined by trying to reduce the variability of data within each class. This method makes each class more homogeneous and better displays outliers in the dataset.<br>
+
+			<b>Quantile</b> - The entire data set is broken evenly into classes. Each class will have the same number of values in them. For our 50 states over 5 classes, the smallest 10 values would be included in the smallest class. The next 10 smallest values would be placed in the next class, and so on.<br>
+		</div>
+
+		<div style="padding: 16px">
+			<h4>Sources</h4>
+			<b>Natural Earth</b>, <i>Medium Scale Cultural Data, Admin 1 - States without large lakes</i>, version 4.1.0. Accessed - October 2020. 
+				<a href="link" url="https://www.naturalearthdata.com/">https://www.naturalearthdata.com</a><br>
+
+			<b>United States Energy Information Administration</b>, <i>State Energy Data System (SEDS)</i>, 2018. Accessed - October 2020. 
+				<a href="link" url="https://www.eia.gov/state/">https://www.eia.gov/state</a>
+		</div>
+
+		<div style="padding: 16px">
+			<h4>Contact</h4>
+			<b>Kyle Feffer</b><br>
+				<b>Website / Resume</b> - <a href="link" url="https://kylefeffer.github.io/web-portfolio/">https://kylefeffer.com</a><br>
+			    <b>Cell Phone</b> - (818) 923-2263<br>
+			    <b>Email</b> - feffer.kyle@gmail.com<br>
+			    <b>Location</b> - Woodridge, IL<br></h5>
+		</div>
 	</body>
 </html>
